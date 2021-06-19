@@ -4,7 +4,7 @@ import io from "socket.io-client";
 
 import TextContainer from '../TextContainer/TextContainer';
 import Messages from '../Messages/Messages';
-import InfoBar from '../InfoBar/InfoBar';
+import Infobar from '../Infobar/Infobar';
 import Input from '../Input/Input';
 
 import './Chat.css';
@@ -23,16 +23,25 @@ const Chat = ({ location }) => {
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
 
-    socket = io(ENDPOINT);
+    var connectionOptions =  {
+      "force new connection" : true,
+      "reconnectionAttempts": "Infinity", 
+      "timeout" : 10000,                  
+      "transports" : ["websocket"]
+  };
+
+  socket = io.connect(ENDPOINT,connectionOptions);
 
     setRoom(room);
     setName(name)
 
     socket.emit('join', { name, room }, (error) => {
-      if(error) {
-        alert(error);
-      }
+     
     });
+    return ()=>{
+      socket.emit('disconnect');
+      socket.off();
+    }
   }, [ENDPOINT, location.search]);
   
   useEffect(() => {
@@ -56,7 +65,7 @@ const Chat = ({ location }) => {
   return (
     <div className="outerContainer">
       <div className="container">
-          <InfoBar room={room} />
+          <Infobar room={room} />
           <Messages messages={messages} name={name} />
           <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
       </div>
