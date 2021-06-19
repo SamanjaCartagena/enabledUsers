@@ -4,12 +4,12 @@ import io from "socket.io-client";
 
 import TextContainer from '../TextContainer/TextContainer';
 import Messages from '../Messages/Messages';
-import Infobar from '../Infobar/Infobar';
+import InfoBar from '../InfoBar/InfoBar';
 import Input from '../Input/Input';
 
 import './Chat.css';
 
-const ENDPOINT = 'https://enabledusersoftoday.herokuapp.com/';
+const ENDPOINT = 'https://project-chat-application.herokuapp.com/';
 
 let socket;
 
@@ -33,7 +33,7 @@ const Chat = ({ location }) => {
         alert(error);
       }
     });
-  }, [location.search]);
+  }, [ENDPOINT, location.search]);
   
   useEffect(() => {
     socket.on('message', message => {
@@ -56,7 +56,7 @@ const Chat = ({ location }) => {
   return (
     <div className="outerContainer">
       <div className="container">
-          <Infobar room={room} />
+          <InfoBar room={room} />
           <Messages messages={messages} name={name} />
           <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
       </div>
