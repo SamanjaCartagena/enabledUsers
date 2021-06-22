@@ -23,26 +23,17 @@ const Chat = ({ location }) => {
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
 
-    var connectionOptions =  {
-      "force new connection" : true,
-      "reconnectionAttempts": "Infinity", 
-      "timeout" : 10000,                  
-      "transports" : ["websocket"]
-  };
-
-  socket = io.connect(ENDPOINT,connectionOptions);
+    socket = io(ENDPOINT);
 
     setRoom(room);
     setName(name)
 
     socket.emit('join', { name, room }, (error) => {
-     
+      if(error) {
+        alert(error);
+      }
     });
-    return ()=>{
-      socket.emit('disconnect');
-      socket.off();
-    }
-  }, [location.search]);
+  }, [ENDPOINT, location.search]);
   
   useEffect(() => {
     socket.on('message', message => {
